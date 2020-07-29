@@ -1,20 +1,30 @@
 import React from 'react'
 import './login.less'
 import logo from './images/logo.png'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import { reqLogin } from '../../api/index'
 
 /**
  * 登入路由组件
  */
 class Login extends React.Component {
   onFinish = (event) => {
-    console.log(event.username)
-    console.log(event.password)
     this.refs.form
       .validateFields()
-      .then((values) => {
-        console.log(values)
+      .then(async (values) => {
+        let { username, password } = values
+
+        let res = await reqLogin({ username, password })
+        let { status, msg } = res
+        if (status === 0) {
+          message.success("登入成功")
+          //  跳转管理页面
+          this.props.history.replace('/')
+        } else {
+          message.error(msg)
+        }
+
       })
       .catch((errorInfo) => {
         console.log('错误：' + errorInfo)
@@ -25,7 +35,7 @@ class Login extends React.Component {
   自定义验证密码
   */
   validatorUser = () => ({
-    validator(rule, value) {
+    validator (rule, value) {
       if (!value) {
         return Promise.reject('请输入密码')
       } else if (value.length < 4) {
@@ -39,7 +49,7 @@ class Login extends React.Component {
     },
   })
 
-  render() {
+  render () {
     return (
       <div className="login">
         <header className="login-header">
