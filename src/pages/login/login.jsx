@@ -1,9 +1,12 @@
 import React from 'react'
+import { Redirect } from 'react-router-dom'
 import './login.less'
-import logo from './images/logo.png'
+import logo from '../../assets/images/logo.png'
 import { Form, Input, Button, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { reqLogin } from '../../api/index'
+import { connect } from 'react-redux'
+import { setIsLogin, setUserName } from '../../store/actionCreators.js'
 
 /**
  * 登入路由组件
@@ -18,13 +21,16 @@ class Login extends React.Component {
         let res = await reqLogin({ username, password })
         let { status, msg } = res
         if (status === 0) {
-          message.success("登入成功")
+          message.success('登入成功')
+          sessionStorage.setItem('__config_center_token', 'true')
+          sessionStorage.setItem('username', username)
+          this.props.setIsLogin(true)
+          this.props.setUserName(username)
           //  跳转管理页面
           this.props.history.replace('/')
         } else {
           message.error(msg)
         }
-
       })
       .catch((errorInfo) => {
         console.log('错误：' + errorInfo)
@@ -35,7 +41,7 @@ class Login extends React.Component {
   自定义验证密码
   */
   validatorUser = () => ({
-    validator (rule, value) {
+    validator(rule, value) {
       if (!value) {
         return Promise.reject('请输入密码')
       } else if (value.length < 4) {
@@ -49,7 +55,13 @@ class Login extends React.Component {
     },
   })
 
-  render () {
+  render() {
+    const user = this.props.username
+    console.log(user)
+    if (user) {
+      return <Redirect to="/" />
+    }
+
     return (
       <div className="login">
         <header className="login-header">
@@ -102,5 +114,25 @@ class Login extends React.Component {
     )
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    username: state.username,
+  }
+}
 
-export default Login
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setIsLogin(isLogin) {
+      console.log(isLogin)
+      const action = setIsLogin(isLogin)
+      dispatch(action)
+    },
+    setUserName(username) {
+      console.log(username)
+      const action = setUserName(username)
+      dispatch(action)
+    },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
