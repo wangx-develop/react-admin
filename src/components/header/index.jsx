@@ -7,6 +7,7 @@ import { formateDate } from '../../utils/dateUtils'
 import menuList from '../../config/menuConfig'
 import { Modal } from 'antd'
 import { setIsLogin, setUserName } from '../../store/actionCreators'
+import LinkButtom from '../linkButtom'
 
 const { confirm } = Modal
 
@@ -52,7 +53,7 @@ class Header extends Component {
     confirm({
       content: '是否退出',
       onOk: () => {
-        console.log('OK')
+        console.log('确定')
         this.props.setIsLogin(false)
         this.props.setUserName('')
         sessionStorage.removeItem('__config_center_token')
@@ -60,7 +61,7 @@ class Header extends Component {
         this.props.history.replace('/login')
       },
       onCancel: () => {
-        console.log('Cancel')
+        console.log('取消')
       },
     })
   }
@@ -89,9 +90,7 @@ class Header extends Component {
       <div className="header">
         <div className="header-top">
           <span>欢迎，{this.props.username}</span>
-          <a href="#!" onClick={this.loginOut}>
-            退出
-          </a>
+          <LinkButtom onClick={this.loginOut}>退出</LinkButtom>
         </div>
         <div className="header-bottom">
           <div className="header-bottom-left">{title}</div>
