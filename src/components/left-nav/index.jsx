@@ -31,14 +31,13 @@ class LeftNav extends Component {
         )
       } else {
         // 查找与当前请求路径匹配的子Item
-        console.log(path)
-        console.log(Item.children)
+
         const cItem = Item.children.find((cItem) => cItem.key === path)
 
         if (cItem) {
           this.openKey = Item.key
         }
-        console.log('1')
+
         return (
           <SubMenu key={Item.key} icon={<Item.icon />} title={Item.title}>
             {this.getMenuNodes_map(Item.children)}
