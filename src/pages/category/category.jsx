@@ -9,6 +9,7 @@ import {
 } from '../../api/index'
 import AddForm from './add-form'
 import UpdateForm from './update-form'
+import { PAGE_SIZE } from '../../utils/constants'
 
 /**
  * 商品分类路由
@@ -249,7 +250,7 @@ class Category extends Component {
             rowKey="_id"
             dataSource={parentId === '0' ? categorys : subCategorys}
             columns={this.columns}
-            pagination={{ defaultPageSize: 5, showQuickJumper: true }}
+            pagination={{ defaultPageSize: PAGE_SIZE, showQuickJumper: true }}
           />
           <Modal
             title="添加分类"

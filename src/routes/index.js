@@ -11,6 +11,10 @@ import Bar from '../pages/charts/bar'
 import Line from '../pages/charts/line'
 import Pie from '../pages/charts/pie'
 
+import ProductHome from '../pages/product/home'
+import ProductAddUpdate from '../pages/product/add-update'
+import ProductDetail from '../pages/product/detail'
+
 let routes = [
   {
     path: '/',
@@ -24,6 +28,21 @@ let routes = [
       {
         path: '/product',
         component: Product,
+        routes: [
+          {
+            path: '/product',
+            component: ProductHome,
+            exact: true,
+          },
+          {
+            path: '/product/addupdate',
+            component: ProductAddUpdate,
+          },
+          {
+            path: '/product/detail',
+            component: ProductDetail,
+          },
+        ],
       },
       {
         path: '/home',
