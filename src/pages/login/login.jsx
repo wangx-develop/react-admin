@@ -19,11 +19,13 @@ class Login extends React.Component {
         let { username, password } = values
 
         let res = await reqLogin({ username, password })
-        let { status, msg } = res
+        let { status, msg, data } = res
+
         if (status === 0) {
           message.success('登入成功')
           sessionStorage.setItem('__config_center_token', 'true')
-          sessionStorage.setItem('username', username)
+          sessionStorage.setItem('username', username) //这个多余了，不过懒得改代码了
+          sessionStorage.setItem('user', JSON.stringify(data)) //登入的用户信息
           this.props.setIsLogin(true)
           this.props.setUserName(username)
           //  跳转管理页面
@@ -57,7 +59,7 @@ class Login extends React.Component {
 
   render() {
     const user = this.props.username
-    console.log(user)
+
     if (user) {
       return <Redirect to="/" />
     }
@@ -123,12 +125,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setIsLogin(isLogin) {
-      console.log(isLogin)
       const action = setIsLogin(isLogin)
       dispatch(action)
     },
     setUserName(username) {
-      console.log(username)
       const action = setUserName(username)
       dispatch(action)
     },

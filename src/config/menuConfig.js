@@ -10,6 +10,7 @@ const menuList = [
     title: '首页', // 菜单标题名称
     key: '/home', // 对应的 path
     icon: PieChartOutlined, // 图标名称
+    isPublic: true, //所有用户都可以看见
   },
   {
     title: '商品',

@@ -28,7 +28,6 @@ export default (state = defaultState, action) => {
     stateCopy.isLogin = action.isLogin
     return stateCopy
   } else if (action.type === types.SET_USERNAME) {
-    console.log(action.username)
     const stateCopy = deepCopy(state)
     stateCopy.username = action.username
     return stateCopy

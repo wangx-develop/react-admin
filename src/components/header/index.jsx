@@ -53,11 +53,11 @@ class Header extends Component {
     confirm({
       content: '是否退出',
       onOk: () => {
-        console.log('确定')
         this.props.setIsLogin(false)
         this.props.setUserName('')
         sessionStorage.removeItem('__config_center_token')
         sessionStorage.removeItem('username')
+        sessionStorage.removeItem('user')
         this.props.history.replace('/login')
       },
       onCancel: () => {

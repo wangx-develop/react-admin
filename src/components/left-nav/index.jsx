@@ -17,34 +17,62 @@ const { SubMenu } = Menu
 
 class LeftNav extends Component {
   /**
+   *
+   * 判断当前登入用户对item是否有权限
+   */
+  hasAuth = (item) => {
+    const { key, isPublic } = item
+    const user = JSON.parse(sessionStorage.getItem('user'))
+    const menus = user.role.menus
+    const username = user.username
+
+    /**
+     * 1、如果是admin用户，直接通过
+     * 2、如果item.isPublic是true
+     * 3、当前用户有此item的权限，key在menus中
+     * 4、如果当前用户有此某个item的子item权限
+     */
+    if (username === 'admin' || isPublic || menus.indexOf(key) !== -1) {
+      return true
+    } else if (item.children) {
+      return !!item.children.find((child) => menus.indexOf(child.key) !== -1)
+    } else {
+      return false
+    }
+  }
+
+  /**
    * map实现
    */
   getMenuNodes_map = (menuList) => {
     //得到当前理由请求路径
     const path = this.props.location.pathname
     return menuList.map((Item) => {
-      if (!Item.children) {
-        return (
-          <Menu.Item key={Item.key} icon={<Item.icon />}>
-            <Link to={Item.key}>{Item.title}</Link>
-          </Menu.Item>
-        )
-      } else {
-        // 查找与当前请求路径匹配的子Item
+      //如果当前用户有item对应的权限，才需要显示对应的菜单项
+      if (this.hasAuth(Item)) {
+        if (!Item.children) {
+          return (
+            <Menu.Item key={Item.key} icon={<Item.icon />}>
+              <Link to={Item.key}>{Item.title}</Link>
+            </Menu.Item>
+          )
+        } else {
+          // 查找与当前请求路径匹配的子Item
 
-        const cItem = Item.children.find((cItem) => {
-          return 0 === path.indexOf(cItem.key)
-        })
+          const cItem = Item.children.find((cItem) => {
+            return 0 === path.indexOf(cItem.key)
+          })
 
-        if (cItem) {
-          this.openKey = Item.key
+          if (cItem) {
+            this.openKey = Item.key
+          }
+
+          return (
+            <SubMenu key={Item.key} icon={<Item.icon />} title={Item.title}>
+              {this.getMenuNodes_map(Item.children)}
+            </SubMenu>
+          )
         }
-
-        return (
-          <SubMenu key={Item.key} icon={<Item.icon />} title={Item.title}>
-            {this.getMenuNodes_map(Item.children)}
-          </SubMenu>
-        )
       }
     })
   }

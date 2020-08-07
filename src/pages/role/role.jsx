@@ -6,6 +6,7 @@ import AddForm from './add-form'
 import AuthForm from './auth-form'
 import { connect } from 'react-redux'
 import { formateDate } from '../../utils/dateUtils'
+import { setIsLogin, setUserName } from '../../store/actionCreators'
 
 /**
  * 角色路由
@@ -60,6 +61,7 @@ class Role extends Component {
     if (result.status === 0) {
       message.success('获取角色列表成功')
       const roles = result.data
+      console.log(roles)
       this.setState({ roles })
     } else {
       message.error('获取角色列表失败')
@@ -112,6 +114,7 @@ class Role extends Component {
     this.setState({
       isShowAuth: false,
     })
+
     const role = this.state.role
     const menus = this.auth.current.getMenus()
 
@@ -123,9 +126,21 @@ class Role extends Component {
     if (result.status === 0) {
       message.success('设置角色权限成功')
       // this.getRoles()
-      this.setState({
-        roles: [...this.state.roles],
-      })
+      //如果当前更新的自己角色的权限，强制退出
+      console.log(JSON.parse(sessionStorage.getItem('user')).role_id)
+      console.log(role._id)
+      if (role._id === JSON.parse(sessionStorage.getItem('user')).role_id) {
+        this.props.setIsLogin(false)
+        this.props.setUserName('')
+        sessionStorage.removeItem('__config_center_token')
+        sessionStorage.removeItem('username')
+        sessionStorage.removeItem('user')
+        this.props.history.push('/login')
+      } else {
+        this.setState({
+          roles: [...this.state.roles],
+        })
+      }
     } else {
       message.error('设置角色权限失败')
     }
@@ -163,7 +178,15 @@ class Role extends Component {
     return (
       <Card title={title}>
         <Table
-          rowSelection={{ type: 'radio', selectedRowKeys: [role._id] }}
+          rowSelection={{
+            type: 'radio',
+            selectedRowKeys: [role._id],
+            onSelect: (role) => {
+              this.setState({
+                role,
+              })
+            },
+          }}
           bordered
           rowKey="_id"
           dataSource={roles}
@@ -203,4 +226,19 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, null)(Role)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setIsLogin(isLogin) {
+      console.log(isLogin)
+      const action = setIsLogin(isLogin)
+      dispatch(action)
+    },
+    setUserName(username) {
+      console.log(username)
+      const action = setUserName(username)
+      dispatch(action)
+    },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Role)
